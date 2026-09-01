@@ -3,13 +3,11 @@ import http from "node:http"; // node native http module
 
 import config from "./config.js";
 
-function registerRoutes(app) {
-  // routes
-  app.get("/", (req, res) => {
-    res.send("hi, starter app");
-  });
+const apiPrefix = config.apiPrefix;
 
-  app.get("/health", (req, res) => {
+function registerRoutes(app) {
+  // api routes -- any other route -- can be frontend
+  app.get(`${apiPrefix}/health`, (req, res) => {
     res.json({ status: "ok", nodeEnv: config.nodeEnv });
   });
 }
@@ -20,6 +18,9 @@ function startup() {
 
   // set middlewares
   app.use(express.json());
+
+  // server /public static files -- GET / -> serves /public/index.html auto
+  app.use(express.static("public"));
 
   // create a http server -- (for future sockets)
   const server = http.createServer(app);
