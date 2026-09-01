@@ -1,0 +1,25 @@
+{
+  "name": "skeleton",
+  "version": "1.0.0",
+  "description": "This is a pure JAVASCRIPT node js lean full stack app.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --env-file=.env src/server.js",
+    "dev": "node --watch --env-file=.env src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morteza-rostami-cs/node-skeleton.git"
+  },
+  "keywords": [],
+  "author": "Morteza Rostami",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/morteza-rostami-cs/node-skeleton/issues"
+  },
+  "homepage": "https://github.com/morteza-rostami-cs/node-skeleton#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
