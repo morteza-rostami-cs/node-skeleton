@@ -3,35 +3,45 @@ import http from "node:http"; // node native http module
 
 import config from "./config.js";
 
-// express app
-const app = express();
+function registerRoutes(app) {
+  // routes
+  app.get("/", (req, res) => {
+    res.send("hi, starter app");
+  });
 
-// routes
-app.get("/", (req, res) => {
-  res.send("hi, starter app");
-});
-
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", nodeEnv: config.nodeEnv });
-});
-
-// create a http server -- (for future sockets)
-const server = http.createServer(app);
-
-// start server
-function startup() {
-  server.listen(config.port, () => {
-    console.log(`server running at http://localhost:${config.port}`);
+  app.get("/health", (req, res) => {
+    res.json({ status: "ok", nodeEnv: config.nodeEnv });
   });
 }
 
-startup();
+// start server
+function startup() {
+  const app = express();
 
-// handle server error
-server.on("error", (error) => {
-  console.error("server error: ", error);
-  process.exit(1); // return 1 on -- runtime server failure
-});
+  // set middlewares
+  app.use(express.json());
+
+  // create a http server -- (for future sockets)
+  const server = http.createServer(app);
+
+  // register routes
+  registerRoutes(app);
+
+  // run http server
+  server.listen(config.port, () => {
+    console.log(`server running at http://localhost:${config.port}`);
+  });
+
+  // handle server error
+  server.on("error", (error) => {
+    console.error("server error: ", error);
+    process.exit(1); // return 1 on -- runtime server failure
+  });
+
+  return { app, server };
+}
+
+const { app, server } = startup();
 
 // shutdown
 function shutdown() {
