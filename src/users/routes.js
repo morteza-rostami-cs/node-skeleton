@@ -10,24 +10,17 @@ import config from "../config.js";
 
 const apiPrefix = config.apiPrefix;
 
-const users = [
-  {
-    id: 1,
-    name: "Alice",
-    email: "alice@example.com",
-  },
-  {
-    id: 2,
-    name: "Bob",
-    email: "bob@example.com",
-  },
-];
-
 function registerUserRoutes({ app, repository }) {
   function gets(req, res) {
+    const users = repository.findAll();
+
+    res.status(200).json(users);
+  }
+
+  function get(req, res) {
     const id = Number(req.params.id); // url params
 
-    const user = users.find((user) => user.id === id);
+    const user = repository.findById(id);
 
     if (!user) {
       return res.status(404).json({
@@ -38,16 +31,19 @@ function registerUserRoutes({ app, repository }) {
     res.json(user);
   }
 
-  function get(req, res) {
-    return res.json(users);
-  }
-
   function create(req, res) {
-    const user = {
-      id: 3,
-      name: "Charlie",
-      email: "charlie@example.com",
+    let data = req.body;
+
+    data = {
+      email: data.email,
+      username: data.username,
+      hashedPassword: data.password,
+      session: "session",
     };
+
+    console.log("body: ", req.body);
+
+    const user = repository.create(data);
 
     res.status(201).json(user);
   }
@@ -55,24 +51,48 @@ function registerUserRoutes({ app, repository }) {
   function edit(req, res) {
     const id = Number(req.params.id);
 
-    const user = {
-      id,
-      name: "Updated User",
-      email: "updated@example.com",
+    const existing = repository.findById(id);
+
+    if (!existing) {
+      return res.status(404).json({
+        error: "user not found",
+      });
+    }
+
+    let data = req.body;
+
+    data = {
+      email: data.email,
+      username: data.username,
+      hashedPassword: data.password,
+      session: "session",
     };
+
+    // update user
+    const user = repository.edit(id, data);
 
     res.json(user);
   }
 
   function del(req, res) {
+    const id = Number(req.params.id);
+
+    const deleted = repository.delete(id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    }
+
     res.status(204).send();
   }
 
   // GET /users/:id
-  app.get(`${apiPrefix}/users/:id`, gets);
+  app.get(`${apiPrefix}/users/:id`, get);
 
   // GET /users
-  app.get(`${apiPrefix}/users`, get);
+  app.get(`${apiPrefix}/users`, gets);
 
   // POST /users
   app.post(`${apiPrefix}/users`, create);
