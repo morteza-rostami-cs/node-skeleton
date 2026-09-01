@@ -4,10 +4,12 @@ import http from "node:http"; // node native http module
 import config from "./config.js";
 import registerUserRoutes from "./users/routes.js";
 import createDatabase from "./db.js";
+import { initializeDatabase } from "./schema.js";
+import UserRepository from "./users/repository.js";
 
 const apiPrefix = config.apiPrefix;
 
-function registerRoutes(app, db) {
+function registerRoutes(app, db, repositories) {
   // api routes -- any other route -- can be frontend
   app.get(`${apiPrefix}/health`, (req, res) => {
     res.json({ status: "ok", nodeEnv: config.nodeEnv });
@@ -31,7 +33,7 @@ function registerRoutes(app, db) {
     });
   });
 
-  registerUserRoutes(app);
+  registerUserRoutes({ app, repository: repositories.users });
 }
 
 // start server
@@ -47,11 +49,19 @@ function startup() {
   // connect to sqlite
   const db = createDatabase();
 
+  // init db models
+  initializeDatabase(db);
+
   // create a http server -- (for future sockets)
   const server = http.createServer(app);
 
+  // register repositories
+  const repositories = {
+    users: new UserRepository(db),
+  };
+
   // register routes
-  registerRoutes(app, db);
+  registerRoutes(app, db, repositories);
 
   // run http server
   server.listen(config.port, () => {

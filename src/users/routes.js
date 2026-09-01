@@ -23,7 +23,7 @@ const users = [
   },
 ];
 
-function registerUserRoutes(app) {
+function registerUserRoutes({ app, repository }) {
   function gets(req, res) {
     const id = Number(req.params.id); // url params
 
