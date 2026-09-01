@@ -10,7 +10,34 @@
   </head>
   <body>
     <h1 class="bg-red-200 p-2 text-lg">node skeleton app</h1>
+    <div id="users"></div>
 
     <script src="./app.js"></script>
+
+    <script type="module">
+      import { getUsers } from "./js/users.js";
+
+      async function main() {
+        const users = await getUsers();
+
+        console.log(users);
+        if (!users) return;
+
+        const usersDiv = document.querySelector("#users");
+
+        if (!usersDiv) return;
+
+        usersDiv.innerHTML = ""; // clear old users
+
+        for (const user of users) {
+          const div = document.createElement("div");
+          div.textContent = user.name || user.email || "Unknown";
+
+          usersDiv.appendChild(div);
+        }
+      }
+
+      main();
+    </script>
   </body>
 </html>

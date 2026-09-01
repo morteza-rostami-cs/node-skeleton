@@ -64,7 +64,7 @@ function registerUserRoutes(app) {
     res.json(user);
   }
 
-  function remove(req, res) {
+  function del(req, res) {
     res.status(204).send();
   }
 
@@ -78,10 +78,10 @@ function registerUserRoutes(app) {
   app.post(`${apiPrefix}/users`, create);
 
   // PUT /users/:id
-  app.put("/api/users/:id", edit);
+  app.put(`${apiPrefix}/users/:id`, edit);
 
   // DELETE /api/users/:id
-  app.delete("/api/users/:id", remove);
+  app.delete(`${apiPrefix}/users/:id`, del);
 }
 
 export default registerUserRoutes;

@@ -12,6 +12,14 @@ function registerRoutes(app) {
     res.json({ status: "ok", nodeEnv: config.nodeEnv });
   });
 
+  // configs for frontend
+  app.get(`${apiPrefix}/config`, (req, res) => {
+    console.log(config);
+    res.json({
+      apiBaseUrl: config.apiBaseUrl,
+    });
+  });
+
   registerUserRoutes(app);
 }
 
