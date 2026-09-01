@@ -2,6 +2,7 @@ import express from "express";
 import http from "node:http"; // node native http module
 
 import config from "./config.js";
+import registerUserRoutes from "./users/routes.js";
 
 const apiPrefix = config.apiPrefix;
 
@@ -10,6 +11,8 @@ function registerRoutes(app) {
   app.get(`${apiPrefix}/health`, (req, res) => {
     res.json({ status: "ok", nodeEnv: config.nodeEnv });
   });
+
+  registerUserRoutes(app);
 }
 
 // start server
